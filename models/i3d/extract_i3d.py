@@ -77,9 +77,9 @@ class ExtractI3D(BaseExtractor):
             video_path = reencode_video_with_diff_fps(video_path, self.tmp_path, self.extraction_fps)
 
         cap = cv2.VideoCapture(video_path)
-        fps = cap.get(cv2.CAP_PROP_FPS)
+        # fps = cap.get(cv2.CAP_PROP_FPS)
         # timestamp when the last frame in the stack begins (when the old frame of the last pair ends)
-        timestamps_ms = []
+        # timestamps_ms = []
         rgb_stack = []
         feats_dict = {stream: [] for stream in self.streams}
 
@@ -118,7 +118,7 @@ class ExtractI3D(BaseExtractor):
                     # in the prev list and the first element in the current list
                     rgb_stack = rgb_stack[self.step_size:]
                     stack_counter += 1
-                    timestamps_ms.append(cap.get(cv2.CAP_PROP_POS_MSEC))
+                    # timestamps_ms.append(cap.get(cv2.CAP_PROP_POS_MSEC))
             else:
                 # we don't run inference if the stack is not full (applicable for i3d)
                 cap.release()
@@ -131,8 +131,8 @@ class ExtractI3D(BaseExtractor):
         # transforms list of features into a np array
         feats_dict = {stream: np.array(feats) for stream, feats in feats_dict.items()}
         # also include the timestamps and fps
-        feats_dict['fps'] = np.array(fps)
-        feats_dict['timestamps_ms'] = np.array(timestamps_ms)
+        # feats_dict['fps'] = np.array(fps)
+        # feats_dict['timestamps_ms'] = np.array(timestamps_ms)
 
         return feats_dict
 
