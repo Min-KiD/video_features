@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 import torch
 import torchvision
-import utils.flow_viz as flow_viz
 from models._base.base_extractor import BaseExtractor
 from models.raft.raft_src.raft import RAFT, InputPadder
 from models.transforms import (PILToTensor, ResizeImproved, ToFloat,
@@ -112,7 +111,6 @@ class BaseOpticalFlowExtractor(BaseExtractor):
         # maybe un-padding only before saving because np.concat will not work if the img is unpadded
         if padder is not None:
             batch_feats = padder.unpad(batch_feats)
-        self.maybe_show_pred(batch_feats, batch)
         return batch_feats
 
     def load_model(self) -> torch.nn.Module:
@@ -135,20 +133,3 @@ class BaseOpticalFlowExtractor(BaseExtractor):
         model = model.to(self.device)
         model.eval()
         return {'model': model}
-
-    def maybe_show_pred(self, batch_feats: torch.Tensor, batch: torch.Tensor):
-        '''Shows the resulting flow frames and a corrsponding RGB frame (the 1st of the two) in a cv2 window.
-
-        Args:
-            batch_feats (torch.Tensor): the output of the model
-            batch (torch.Tensor): the stack of rgb inputs
-            device (torch.device, optional): _description_. Defaults to None.
-        '''
-        if self.show_pred:
-            for idx, flow in enumerate(batch_feats):
-                img = batch[idx].permute(1, 2, 0).cpu().numpy()
-                flow = flow.permute(1, 2, 0).cpu().numpy()
-                flow = flow_viz.flow_to_image(flow)
-                img_flow = np.concatenate([img, flow], axis=0)
-                cv2.imshow('Press any key to see the next frame...', img_flow[:, :, [2, 1, 0]] / 255.0)
-                cv2.waitKey()
