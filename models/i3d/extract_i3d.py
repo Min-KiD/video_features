@@ -199,7 +199,7 @@ class ExtractI3D(BaseExtractor):
             i3d_stream_model = i3d_stream_model.to(self.device)
             i3d_stream_model.eval()
             i3d_stream_models[stream] = i3d_stream_model
-            i3d_stream_models = nn.DataParallel(i3d_stream_models)
+        i3d_stream_models = nn.DataParallel(i3d_stream_models)
         name2module['model'] = i3d_stream_models
 
         return name2module
