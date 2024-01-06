@@ -4,7 +4,6 @@ from typing import Dict
 import cv2
 import numpy as np
 import torch
-import torch.nn as nn
 import torchvision
 from models._base.base_extractor import BaseExtractor
 from models.i3d.i3d_src.i3d_net import I3D
@@ -197,7 +196,6 @@ class ExtractI3D(BaseExtractor):
             i3d_stream_model = I3D(num_classes=self.i3d_classes_num, modality=stream)
             i3d_stream_model.load_state_dict(torch.load(i3d_weights_paths[stream], map_location='cpu'))
             i3d_stream_model = i3d_stream_model.to(self.device)
-            i3d_stream_models = nn.DataParallel(i3d_stream_models)
             i3d_stream_model.eval()
             i3d_stream_models[stream] = i3d_stream_model
         name2module['model'] = i3d_stream_models
